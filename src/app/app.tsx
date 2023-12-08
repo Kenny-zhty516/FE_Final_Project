@@ -3,25 +3,25 @@ import { Book, BookList } from "components/organisms/book-list";
 import { ChangeEvent, MouseEvent, useState, useEffect } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { Outlet } from "react-router-dom";
-import { Formik, Field, Form } from 'formik';
-import * as Yup from 'yup';
+import { Formik, Field, Form } from "formik";
+import * as Yup from "yup";
 
 import * as Realm from "realm-web";
 
 // Create a component that lets an anonymous user log in
 interface LoginProps {
   setUser: (user: Realm.User) => void;
-};
+}
 
 const app = new Realm.App({ id: "application-0-ygaoq" });
-
 
 // Create a component that displays the given user's details
 const UserDetail = ({ user }: { user: Realm.User }) => {
   window.console.log("User", user);
 
   const [bookName, setBookName] = useState("");
-  const [db, setDb] = useState<globalThis.Realm.Services.MongoDBDatabase | null>(null);
+  const [db, setDb] =
+    useState<globalThis.Realm.Services.MongoDBDatabase | null>(null);
 
   useEffect(() => {
     if (user !== null) {
@@ -29,7 +29,7 @@ const UserDetail = ({ user }: { user: Realm.User }) => {
       const booksDb = realmService.db("books");
       setDb(booksDb);
     }
-  }, [user])
+  }, [user]);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setBookName(e.target.value);
@@ -39,12 +39,12 @@ const UserDetail = ({ user }: { user: Realm.User }) => {
     event.preventDefault();
     if (db) {
       const record = {
-        "book_name": bookName,
+        book_name: bookName,
         // Must have "owner_id", and "owner_name" values, so that app service can
         // verify the data belongs to the authenticated user and the user has
         // permission to perform operation on this data.
-        "owner_id": user.id,
-        "owner_name": user.profile.name
+        owner_id: user.id,
+        owner_name: user.profile.name,
       };
       db.collection("reading-list").insertOne(record);
     }
@@ -60,11 +60,9 @@ const UserDetail = ({ user }: { user: Realm.User }) => {
           type="text"
           placeholder="Book Name"
           value={bookName}
-          onChange={handleInputChange} />
-        <button
-          type="button"
-          onClick={handleSaveClick}
-        >
+          onChange={handleInputChange}
+        />
+        <button type="button" onClick={handleSaveClick}>
           Save Book Name
         </button>
       </section>
@@ -75,13 +73,18 @@ const UserDetail = ({ user }: { user: Realm.User }) => {
 // Create a component that lets an anonymous user log in
 interface LoginProps {
   setUser: (user: Realm.User) => void;
-};
+}
 
 const Login = ({ setUser }: LoginProps) => {
   const loginGoogle = async () => {
     // const user: Realm.User = await app.logIn(Realm.Credentials.google({ redirectUrl: "http://localhost:3000/auth.html" }));
     // TODO change this to Netlify link after deploy
-    const user: Realm.User = await app.logIn(Realm.Credentials.google({ redirectUrl: "http://localhost:3000/auth.html" }));
+    const user: Realm.User = await app.logIn(
+      Realm.Credentials.google({
+        // redirectUrl: "http://localhost:3000/auth.html",
+        redirectUrl: "https://meek-bavarois-29455f.netlify.app/",
+      })
+    );
     setUser(user);
   };
   return <button onClick={loginGoogle}>Log In</button>;
@@ -90,7 +93,7 @@ const Login = ({ setUser }: LoginProps) => {
 interface LogOutProps {
   user: Realm.User;
   setUser: (user: Realm.User | null) => void;
-};
+}
 
 const LogOut = ({ user, setUser }: LogOutProps) => {
   const handleClick = (e: MouseEvent<HTMLElement>) => {
@@ -100,10 +103,8 @@ const LogOut = ({ user, setUser }: LogOutProps) => {
       setUser(null);
     }
   };
-  return (
-    <button onClick={handleClick}>Log Out</button>
-  );
-}
+  return <button onClick={handleClick}>Log Out</button>;
+};
 
 interface SearchResponse {
   docs: Book[];
@@ -132,14 +133,13 @@ function App() {
 
   const SignupSchema = Yup.object().shape({
     bookName: Yup.string()
-      .min(5, 'Too Short!')
-      .max(50, 'Too Long!')
-      .required('Required'),
+      .min(5, "Too Short!")
+      .max(50, "Too Long!")
+      .required("Required"),
   });
 
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-start gap-4 mt-20 text-center">
-
       <div className="App">
         <div className="App-header">
           {user ? <UserDetail user={user} /> : <Login setUser={setUser} />}
@@ -150,7 +150,7 @@ function App() {
       <div className="flex">
         <Formik
           initialValues={{
-            bookName: '',
+            bookName: "",
           }}
           validationSchema={SignupSchema}
           onSubmit={(values) => {
@@ -162,10 +162,12 @@ function App() {
         >
           {({ errors, touched }) => (
             <Form>
-              <Field name="bookName"
+              <Field
+                name="bookName"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Enter Book Name"
-                title="Please put a book name" />
+                title="Please put a book name"
+              />
 
               {errors.bookName && touched.bookName ? (
                 <div>{errors.bookName}</div>
@@ -175,14 +177,13 @@ function App() {
                 // type="button"
                 type="submit"
                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ml-2"
-              // onClick={handleClick}
+                // onClick={handleClick}
               >
                 Search
               </button>
             </Form>
           )}
         </Formik>
-
       </div>
 
       <div className="flex">
