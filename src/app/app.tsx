@@ -82,7 +82,7 @@ const Login = ({ setUser }: LoginProps) => {
     const user: Realm.User = await app.logIn(
       Realm.Credentials.google({
         // redirectUrl: "http://localhost:3000/auth.html",
-        redirectUrl: "https://meek-bavarois-29455f.netlify.app/",
+        redirectUrl: "https://meek-bavarois-29455f.netlify.app/auth.html",
       })
     );
     setUser(user);
